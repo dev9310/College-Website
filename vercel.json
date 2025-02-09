@@ -2,8 +2,7 @@
     "version": 2,
     "builds": [{
         "src": "Event/wsgi.py",
-        "use": "@vercel/python",
-        "config": { "maxLambdaSize": "15mb" }
+        "use": "@vercel/python"
     }],
     "routes": [{
         "src": "/(.*)",
