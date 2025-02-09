@@ -1,16 +1,25 @@
 {
     "version": 2,
     "builds": [{
-        "src": "Event/wsgi.py",
-        "use": "@vercel/python"
-    }],
+            "src": "Event/wsgi.py",
+            "use": "@vercel/python"
+        },
+        {
+            "src": "staticfiles/**/*",
+            "use": "@vercel/static"
+        }
+    ],
     "routes": [{
             "src": "/static/(.*)",
-            "dest": "/staticfiles/$1"
+            "dest": "staticfiles/$1"
         },
         {
             "src": "/media/(.*)",
-            "dest": "/media/$1"
+            "dest": "media/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "Event/wsgi.py"
         }
     ]
 }

@@ -13,26 +13,17 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from supabase import create_client
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Supabase settings (Load from .env file)
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-
-# Initialize Supabase client
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security settings
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-default-key")
 DEBUG = os.getenv("DEBUG", "True") == "True"
-
-ALLOWED_HOSTS = ["*"]  # Allow all hosts (change this for production)
+ALLOWED_HOSTS = ["*"]  # Change this for production
 
 # Application definition
 INSTALLED_APPS = [
@@ -42,12 +33,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "whitenoise.runserver_nostatic",  # Ensures static files work in local dev
     "Home",  # Your app
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # WhiteNoise for static files
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Enables serving static files
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -82,12 +74,13 @@ WSGI_APPLICATION = "Event.wsgi.application"
 # Database settings
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("SUPABASE_DB_NAME"),
-        "USER": os.getenv("SUPABASE_DB_USER"),
-        "PASSWORD": os.getenv("SUPABASE_DB_PASSWORD"),
-        "HOST": os.getenv("SUPABASE_DB_HOST"),
-        "PORT": os.getenv("SUPABASE_DB_PORT", "5432"),
+        "ENGINE": os.getenv("ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.getenv("NAME", "default_NAME"),
+        "USER": os.getenv("USER", "default_USER"),
+        "PASSWORD": os.getenv("PASSWORD", "default_PASSWORD"),
+        "HOST": os.getenv("HOST", "default_HOST"),
+        "PORT": os.getenv("PORT", "5432"),
+        "OPTIONS": {"sslmode": "require"},  # Enforce SSL connection
     }
 }
 
@@ -105,14 +98,14 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# Static files settings (for Vercel)
+# Static files settings
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]  # Ensure this directory exists
-STATIC_ROOT = BASE_DIR / "staticfiles"  # collectstatic output directory
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]  # Static files directory
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_build", "static")  # Production static files
 
 # Media files (for user uploads)
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
