@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sports Day Event</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'Home/css/acem.css' %}" />
+    <style>
+      body {
+        background: url("{% static 'Home/img/satyam.avif' %}") no-repeat center
+          center/cover;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar with logo and mobile menu button -->
+    <nav class="navbar">
+      <img
+        src="{% static 'Home/img/logo2.png' %}"
+        alt="College Logo"
+        class="logo"
+      />
+      <div class="nav-items">
+        <img
+          src="{% static 'Home/img/icon-menu.svg' %}"
+          alt="menu-btn"
+          id="menu-btn"
+        />
+      </div>
+      <!-- For desktop, nav-buttons appear inline; on mobile, they slide in -->
+      <div class="nav-buttons">
+        <!-- Close button remains visible -->
+        <div class="close-btn">
+          <img
+            src="{% static 'Home/img/icon-menu-close.svg' %}"
+            alt="close-btn"
+            id="close-btn-icon"
+          />
+        </div>
+        <!-- Menu items that will animate in sequence -->
+        <p class="follow-us menu-item">
+          <a href=" {% url 'social' %} ">Socials</a>
+        </p>
+        <p class="follow-usS menu-item">
+          <a href="{% url 'gallery' %}">Galleria</a>
+        </p>
+        <p class="follow-usS menu-item">
+          <a href="{% url 'upcoming' %}">Upcoming Events</a>
+        </p>
+        <p class="follow-usS menu-item">
+          <a href="{% url 'videos' %}">View Videos</a>
+        </p>
+        <p class="follow-usS menu-item">
+          <a href="{% url 'leaderboard' %}">View Leaderboard</a>
+        </p>
+        <p class="made-by">Made with ❤️ by ACEM</p>
+      </div>
+    </nav>
+
+    <!-- Upload Interface Container -->
+    <div id="uploadContainer" class="glass-container fade-in">
+      <h2>Sports Day Moments</h2>
+      <p class="description">
+        Capture your unforgettable moments on Sports Day! Upload your team
+        picture, adjust the watermark hashtags, and share your memories.
+      </p>
+      <div
+        class="upload-box"
+        onclick="document.getElementById('fileInput').click()"
+      >
+        Click here to Upload Your Image
+        <input type="file" id="fileInput" accept="image/*" />
+      </div>
+      <!-- Hashtags container (hidden until image is loaded) -->
+      <div id="hashtags" class="hashtags">
+        <div class="hashtag-option" onclick="addHashtag('#MomentsAtAravali')">
+          #MomentsAtAravali
+        </div>
+        <div class="hashtag-option" onclick="addHashtag('#MomentsAtACEM')">
+          #MomentsAtACEM
+        </div>
+        <div class="hashtag-option" onclick="addHashtag('#sportsDay')">
+          #sportsDay
+        </div>
+      </div>
+      <div id="imagePreview" class="uploaded-img"></div>
+      <button class="submit-btn" onclick="submitImage()">Submit</button>
+      <p class="social-note">
+        Note: By submitting your image, you agree that the college may use it on
+        its social media platforms.
+      </p>
+    </div>
+
+    <!-- Success Container -->
+    <div id="successContainer" class="success-container fade-in">
+      <h2>Success!</h2>
+      <p class="success-message">Your image has been uploaded successfully.</p>
+      <div id="finalImagePreview" class="uploaded-img"></div>
+      <div class="btn-group">
+        <button class="action-btn" onclick="downloadImage()">Download</button>
+        <button class="action-btn" onclick="uploadMore()">Upload More</button>
+      </div>
+    </div>
+
+    <!-- Include html2canvas (version 1.4.1) -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script>
+      let selectedImageElement = null;
+      let dragItem = null;
+      let offsetX, offsetY;
+
+      // For resizing overlays
+      let resizingItem = null,
+        initialFontSize = null,
+        startX = 0,
+        startY = 0;
+
+      // Preview uploaded image and show hashtags
+      function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const previewContainer = document.getElementById("imagePreview");
+            previewContainer.innerHTML = `<img src="${e.target.result}" id="uploadedImage">`;
+            selectedImageElement = document.getElementById("uploadedImage");
+            selectedImageElement.parentElement
+              .querySelectorAll(".overlay-hashtag")
+              .forEach((el) => el.remove());
+            previewContainer.style.display = "block";
+            document.getElementById("hashtags").style.display = "flex";
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      // Hamburger Menu JavaScript
+      const menuBtn = document.getElementById("menu-btn");
+      const navButtons = document.querySelector(".nav-buttons");
+      const closeBtn = document.getElementById("close-btn-icon");
+
+      menuBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        navButtons.classList.add("open");
+      });
+
+      closeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        navButtons.classList.remove("open");
+      });
+
+      // Close mobile menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !navButtons.contains(e.target) &&
+          e.target !== menuBtn &&
+          navButtons.classList.contains("open")
+        ) {
+          navButtons.classList.remove("open");
+        }
+      });
+
+      // Add draggable & resizable watermark overlay on the image
+      function addHashtag(text) {
+        if (!selectedImageElement) return;
+        const overlay = document.createElement("div");
+        overlay.className = "overlay-hashtag";
+        overlay.innerText = text;
+
+        const imgWidth = selectedImageElement.clientWidth;
+        const imgHeight = selectedImageElement.clientHeight;
+        const randomX = Math.random() * (imgWidth - 150);
+        const randomY = Math.random() * (imgHeight - 50);
+        overlay.style.left = randomX + "px";
+        overlay.style.top = randomY + "px";
+
+        const handle = document.createElement("span");
+        handle.className = "resize-handle";
+        handle.addEventListener("mousedown", resizeStart);
+        handle.addEventListener("touchstart", resizeStart, { passive: false });
+        overlay.appendChild(handle);
+
+        overlay.addEventListener("mousedown", dragStart);
+        overlay.addEventListener("touchstart", dragStart, { passive: false });
+
+        selectedImageElement.parentElement.appendChild(overlay);
+      }
+
+      // Dragging Functions
+      function dragStart(e) {
+        if (e.target.classList.contains("resize-handle")) return;
+        if (e.touches) e = e.touches[0];
+        if (e.target.classList.contains("overlay-hashtag")) {
+          dragItem = e.target;
+          const rect = dragItem.getBoundingClientRect();
+          offsetX = e.clientX - rect.left;
+          offsetY = e.clientY - rect.top;
+          document.addEventListener("mousemove", drag);
+          document.addEventListener("mouseup", dragEnd);
+          document.addEventListener("touchmove", drag, { passive: false });
+          document.addEventListener("touchend", dragEnd);
+        }
+      }
+      function drag(e) {
+        if (dragItem) {
+          if (e.touches) e = e.touches[0];
+          const parentRect = selectedImageElement.getBoundingClientRect();
+          let x = e.clientX - parentRect.left - offsetX;
+          let y = e.clientY - parentRect.top - offsetY;
+          x = Math.max(
+            0,
+            Math.min(x, selectedImageElement.clientWidth - dragItem.offsetWidth)
+          );
+          y = Math.max(
+            0,
+            Math.min(
+              y,
+              selectedImageElement.clientHeight - dragItem.offsetHeight
+            )
+          );
+          dragItem.style.left = x + "px";
+          dragItem.style.top = y + "px";
+          e.preventDefault();
+        }
+      }
+      function dragEnd() {
+        dragItem = null;
+        document.removeEventListener("mousemove", drag);
+        document.removeEventListener("mouseup", dragEnd);
+        document.removeEventListener("touchmove", drag);
+        document.removeEventListener("touchend", dragEnd);
+      }
+
+      // Resizing Functions
+      function resizeStart(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.touches) e = e.touches[0];
+        resizingItem = this.parentElement;
+        startX = e.clientX;
+        startY = e.clientY;
+        initialFontSize = parseFloat(
+          window.getComputedStyle(resizingItem).fontSize
+        );
+        document.addEventListener("mousemove", resizing);
+        document.addEventListener("mouseup", resizeEnd);
+        document.addEventListener("touchmove", resizing, { passive: false });
+        document.addEventListener("touchend", resizeEnd);
+      }
+      function resizing(e) {
+        if (!resizingItem) return;
+        if (e.touches) e = e.touches[0];
+        let delta = e.clientX - startX;
+        let newSize = Math.max(10, initialFontSize + delta);
+        resizingItem.style.fontSize = newSize + "px";
+        let ratio = newSize / initialFontSize;
+        resizingItem.style.padding = 8 * ratio + "px " + 12 * ratio + "px";
+        e.preventDefault();
+      }
+      function resizeEnd() {
+        resizingItem = null;
+        document.removeEventListener("mousemove", resizing);
+        document.removeEventListener("mouseup", resizeEnd);
+        document.removeEventListener("touchmove", resizing);
+        document.removeEventListener("touchend", resizeEnd);
+      }
+
+      // Simulated send image function (POST request)
+      function sendImageToJSON(dataUrl) {
+        fetch("/save-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: dataUrl }),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log("Image saved to JSON:", data))
+          .catch((error) =>
+            console.error("Error saving image to JSON:", error)
+          );
+      }
+
+      // Submit the image and transition to success container
+      function submitImage() {
+        if (!selectedImageElement) {
+          alert("Please upload an image first.");
+          return;
+        }
+        const uploadContainer = document.getElementById("uploadContainer");
+        uploadContainer.style.opacity = "0";
+        setTimeout(() => {
+          uploadContainer.style.display = "none";
+          const finalContainer = document.getElementById("finalImagePreview");
+          finalContainer.innerHTML =
+            document.getElementById("imagePreview").innerHTML;
+          finalContainer.style.display = "block";
+          const successContainer = document.getElementById("successContainer");
+          successContainer.style.display = "block";
+          successContainer.style.opacity = "0";
+          setTimeout(() => {
+            successContainer.style.opacity = "1";
+            html2canvas(document.getElementById("finalImagePreview"), {
+              allowTaint: true,
+              useCORS: true,
+            }).then((canvas) => {
+              const dataUrl = canvas.toDataURL("image/png");
+              sendImageToJSON(dataUrl);
+            });
+          }, 50);
+        }, 500);
+      }
+
+      // Download the final watermarked image
+      function downloadImage() {
+        const finalElement = document.getElementById("finalImagePreview");
+        html2canvas(finalElement, { allowTaint: true, useCORS: true })
+          .then((canvas) => {
+            canvas.toBlob((blob) => {
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              link.href = url;
+              link.download =
+                "{% static 'Home/images/SportsDay_Moment.png' %} ";
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+            }, "image/png");
+          })
+          .catch((error) => console.error("html2canvas error: ", error));
+      }
+
+      // Reset interface for uploading more images
+      function uploadMore() {
+        document.getElementById("imagePreview").innerHTML = "";
+        document.getElementById("imagePreview").style.display = "none";
+        document.getElementById("finalImagePreview").innerHTML = "";
+        document.getElementById("fileInput").value = "";
+        selectedImageElement = null;
+        document.getElementById("hashtags").style.display = "none";
+        const successContainer = document.getElementById("successContainer");
+        successContainer.style.opacity = "0";
+        setTimeout(() => {
+          successContainer.style.display = "none";
+          const uploadContainer = document.getElementById("uploadContainer");
+          uploadContainer.style.display = "flex";
+          setTimeout(() => {
+            uploadContainer.style.opacity = "1";
+          }, 50);
+        }, 500);
+      }
+
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", previewImage);
+    </script>
+  </body>
+</html>

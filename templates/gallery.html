@@ -1,0 +1,285 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>College Galleria</title>
+    <style>
+      /* Reset styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        background: url("{% static  'Home/img/satyam.avif' %}") no-repeat center
+          center/cover;
+        background-attachment: fixed;
+        background-size: cover;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+        overflow-x: hidden;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Heading for the Galleria Section */
+      h1 {
+        font-size: 3em;
+        margin-bottom: 40px;
+        margin-top: 40px;
+        text-align: center;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        font-weight: 700;
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.6);
+        transition: color 0.3s ease, transform 0.3s ease;
+      }
+
+      h1:hover {
+        transform: scale(1.1);
+        color: #ff9800;
+      }
+
+      /* Galleria Section Styles */
+      .galleria-container {
+        display: grid;
+        grid-template-columns: repeat(
+          3,
+          1fr
+        ); /* Three columns per row on desktop */
+        gap: 20px;
+        padding: 30px;
+        width: 90%; /* Increased container width */
+        max-width: 1400px; /* Increased maximum width */
+        margin: 20px 0;
+        margin: auto;
+      }
+
+      /* Container for Image and Description */
+      .galleria-item {
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease-in-out;
+        background: #000;
+        will-change: transform;
+      }
+
+      .galleria-item img {
+        width: 100%;
+        height: 350px; /* Kept the fixed height */
+        object-fit: cover;
+        border-radius: 15px;
+        transition: transform 0.3s ease;
+        will-change: transform;
+      }
+
+      /* Hover effect on image */
+      .galleria-item:hover {
+        transform: scale(1.03);
+      }
+
+      .galleria-item:hover img {
+        transform: scale(1.05);
+      }
+
+      /* Glass effect for description container */
+      .description-container {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 15px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+        color: #fff;
+        text-align: center;
+        font-size: 1.1em;
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+        display: block;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+      }
+
+      .galleria-item:hover .description-container {
+        opacity: 1;
+      }
+
+      .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.637);
+        z-index: 2;
+      }
+
+      .front {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+      }
+
+      /* Glass Effect Popup (currently commented out) */
+      .glass-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 800px;
+        height: 60%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        padding: 20px;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      .glass-container.show {
+        opacity: 1;
+      }
+
+      .description-text {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+      }
+
+      /* Media Query for responsiveness */
+      @media screen and (max-width: 768px) {
+        .galleria-container {
+          grid-template-columns: repeat(2, 1fr); /* Two columns on tablet */
+          width: 90%;
+        }
+        h1 {
+          font-size: 2em;
+          letter-spacing: 2px;
+        }
+      }
+
+      @media screen and (max-width: 480px) {
+        .galleria-container {
+          grid-template-columns: repeat(1, 1fr); /* One column on mobile */
+          width: 95%;
+        }
+        h1 {
+          font-size: 1.8em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background"></div>
+    <div class="front">
+      <h1>College Moments Galleria</h1>
+
+      <!-- Galleria Section -->
+      <div class="galleria-container">
+        <!-- Image 1 -->
+        <div
+          class="galleria-item"
+          onclick="openImage('img1.jpg', 'A 24 Hour Hackathon Hosted In .')"
+        >
+          <img src="{% static 'Home/img/img1.jpg' %}" alt="Moment 1" />
+          <div class="description-container">
+            A 24 Hour Hackathon Hosted In .
+          </div>
+        </div>
+        <!-- Image 2 -->
+        <div
+          class="galleria-item"
+          onclick="openImage('img2.jpg', 'Just Enjoy The Beauty Of  #VIBES.')"
+        >
+          <img src="{% static 'Home/img/img2.jpg' %}" alt="Moment 2" />
+          <div class="description-container">
+            Just Enjoy The Beauty Of #VIBES.
+          </div>
+        </div>
+        <!-- Image 3 -->
+        <div
+          class="galleria-item"
+          onclick="openImage('img3.jpg', 'Some Special People Bring Some Special Moments.')"
+        >
+          <img src="{% static 'Home/img/img3.jpg' %}" alt="Moment 3" />
+          <div class="description-container">
+            Some Special People Bring Some Special Moments.
+          </div>
+        </div>
+        <!-- Image 4 -->
+        <div
+          class="galleria-item"
+          onclick="openImage('img4.jpg', 'Welcome To , Where Students Love To Learn N Explore.')"
+        >
+          <img src="{% static 'Home/img/img4.jpg' %}" alt="Moment 4" />
+          <div class="description-container">
+            Welcome To , Where Students Love To Learn N Explore.
+          </div>
+        </div>
+        <!-- Image 5 -->
+        <div
+          class="galleria-item"
+          onclick="openImage('img5.jpg', 'Welcome To , Where Students Love To Learn N Explore.')"
+        >
+          <img src="{% static 'Home/img/img5.jpg' %}" alt="Moment 5" />
+          <div class="description-container">
+            Welcome To, Where Students Love To Learn N Explore.
+          </div>
+        </div>
+        <!-- Image 6 -->
+        <div
+          class="galleria-item"
+          onclick="openImage('img6.jpg', 'Welcome To , Where Students Love To Learn N Explore.')"
+        >
+          <img src="{% static 'Home/img/img6.jpg' %}" alt="Moment 6" />
+          <div class="description-container">
+            Welcome To , Where Students Love To Learn N Explore.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Glass Effect Popup (currently commented out) -->
+    <!--
+    <div id="glassPopup" class="glass-container">
+      <div class="description-text" id="popupDescription"></div>
+      <button onclick="closeImage()">Close</button>
+    </div>
+    -->
+
+    <script>
+      // Function to open the clicked image and display it in the background
+      function openImage(imageUrl, description) {
+        document.body.style.backgroundImage = `url(${imageUrl})`;
+        // Uncomment below lines to use the glass effect popup if needed
+        // document.getElementById('popupDescription').innerText = description;
+        // document.getElementById("glassPopup").classList.add("show");
+      }
+
+      // Function to close the popup and reset background
+      function closeImage() {
+        // document.getElementById("glassPopup").classList.remove("show");
+      }
+    </script>
+  </body>
+</html>

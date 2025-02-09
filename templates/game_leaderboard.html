@@ -1,0 +1,202 @@
+<!-- filepath: /Z:/Django/College Project/Event/templates/game_leaderboard.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ game.name }} Leaderboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-t5P52q+Rl7zOfKyK8Gsnk1u5uMk1HlLsqkT2HKo3S9FJX9vfcQFTS85TE4Z3Vlf1mK9exn1zLxk2X8thJp25eg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <link rel="stylesheet" href="{% static 'Home/css/leaderboard.css' %}" />
+  </head>
+  <body>
+    <div class="navbar fade">
+      <h1>{{ game.name }} Leaderboard</h1>
+      <div class="user-info">
+        Logged in as: <span id="userEmail">{{ user.email }}</span>
+      </div>
+      <div class="hamburger" onclick="toggleSidebar()">&#8230;</div>
+    </div>
+
+    <div class="main-content fade">
+      <div class="glass-container fade" id="leaderboardContainer">
+        <h2 id="gameTitle">{{ game.name }} Leaderboard</h2>
+        <div class="table-wrapper" id="tableContainer">
+          <table>
+            <thead>
+              <tr>
+                <th>Team</th>
+                <th>Pts</th>
+                <th>W</th>
+                <th>L</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for team in teams %}
+              <tr>
+                <td
+                  class="team-name"
+                  onclick="delayedOpenTeamModal('{{ team.name }}')"
+                >
+                  {{ team.name }}
+                </td>
+                <td>
+                  {% if user.is_staff %}
+                  <input
+                    type="number"
+                    value="{{ team.points }}"
+                    data-id="{{ team.id }}"
+                    data-field="points"
+                  />
+                  {% else %} {{ team.points }} {% endif %}
+                </td>
+                <td>
+                  {% if user.is_staff %}
+                  <input
+                    type="number"
+                    value="{{ team.won }}"
+                    data-id="{{ team.id }}"
+                    data-field="won"
+                  />
+                  {% else %} {{ team.won }} {% endif %}
+                </td>
+                <td>
+                  {% if user.is_staff %}
+                  <input
+                    type="number"
+                    value="{{ team.lost }}"
+                    data-id="{{ team.id }}"
+                    data-field="lost"
+                  />
+                  {% else %} {{ team.lost }} {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% if user.is_staff %}
+        <div class="btn-group" id="adminControls">
+          <button class="edit-btn" onclick="toggleEditMode()">Edit</button>
+          <button
+            class="save-btn"
+            onclick="saveChanges()"
+            style="display: none"
+          >
+            Save
+          </button>
+          <button class="add-team-btn" onclick="toggleAddTeamForm()">
+            Add Team
+          </button>
+        </div>
+        <div class="add-team-form" id="addTeamForm" style="display: none">
+          <form
+            id="addTeamFormElement"
+            method="post"
+            enctype="multipart/form-data"
+            action="{% url 'add_team' game.id %}"
+          >
+            {% csrf_token %}
+            <label>
+              Team Name:
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter team name"
+                required
+              />
+            </label>
+            <label>
+              Pts:
+              <input type="number" name="points" placeholder="0" required />
+            </label>
+            <label>
+              W:
+              <input type="number" name="won" placeholder="0" required />
+            </label>
+            <label>
+              L:
+              <input type="number" name="lost" placeholder="0" required />
+            </label>
+            <label>
+              Team Image:
+              <input type="file" name="image" accept="image/*" />
+            </label>
+            <div class="btn-group">
+              <button class="save-btn" type="submit">Submit</button>
+              <button
+                class="edit-btn"
+                type="button"
+                onclick="toggleAddTeamForm()"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div id="teamModal" class="team-modal" style="display: none">
+      <div class="team-modal-content">
+        <span class="close-button" onclick="closeTeamModal()">×</span>
+        <div id="teamModalBody"></div>
+      </div>
+    </div>
+
+    <script>
+      function toggleEditMode() {
+        document.querySelectorAll('input[type="number"]').forEach((input) => {
+          input.disabled = !input.disabled;
+        });
+        document.querySelector(".edit-btn").style.display = "none";
+        document.querySelector(".save-btn").style.display = "inline-block";
+      }
+
+      function saveChanges() {
+        const data = {
+          teams: [],
+        };
+        document.querySelectorAll('input[type="number"]').forEach((input) => {
+          const id = input.getAttribute("data-id");
+          const field = input.getAttribute("data-field");
+          const value = input.value;
+          let team = data.teams.find((t) => t.id == id);
+          if (!team) {
+            team = { id: id };
+            data.teams.push(team);
+          }
+          team[field] = value;
+        });
+
+        fetch("{% url 'update_team' game.id %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: JSON.stringify(data),
+        }).then((response) => {
+          if (response.ok) {
+            location.reload();
+          } else {
+            alert("Failed to save changes.");
+          }
+        });
+      }
+
+      function toggleAddTeamForm() {
+        const form = document.getElementById("addTeamForm");
+        form.style.display = form.style.display === "none" ? "block" : "none";
+      }
+    </script>
+  </body>
+</html>

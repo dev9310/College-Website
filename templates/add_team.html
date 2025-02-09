@@ -1,0 +1,34 @@
+<!-- filepath: /Z:/Django/College Project/Event/templates/add_team.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Team</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-t5P52q+Rl7zOfKyK8Gsnk1u5uMk1HlLsqkT2HKo3S9FJX9vfcQFTS85TE4Z3Vlf1mK9exn1zLxk2X8thJp25eg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="{% static 'Home/css/leaderboard.css' %}" />
+  </head>
+  <body>
+    <div class="main-content fade">
+      <div class="glass-container fade">
+        <h2>Add Team</h2>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %} {{ form.as_p }}
+          <div class="btn-group">
+            <button class="save-btn" type="submit">Submit</button>
+            <a class="edit-btn" href="{% url 'game_leaderboard' game_id %}"
+              >Cancel</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

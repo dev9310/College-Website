@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Media Popup</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* General reset and body setup */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-image: url("{% static  'Home/img/satyam.avif' %}"); /* Add your image path here */
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        color: #fff;
+      }
+
+      /* Dark overlay for the background */
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+      }
+
+      /* Glass Effect Popup */
+      .popup-container {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .popup-content {
+        width: 400px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        text-align: center;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        color: #fff;
+        transition: opacity 0.5s ease;
+      }
+
+      /* Title */
+      .popup-content h2 {
+        margin-bottom: 20px;
+        font-size: 2em;
+        color: #fff;
+      }
+
+      /* Social Media Row */
+      .social-media-row {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .social-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.3s ease;
+      }
+
+      .social-item:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: scale(1.05);
+      }
+
+      .social-item i {
+        margin-right: 10px;
+        font-size: 1.5em;
+      }
+
+      /* Bottom Message */
+      .bottom-message {
+        margin-top: 30px;
+        font-size: 1em;
+        color: #bbb;
+      }
+
+      /* Button to trigger popup */
+      .open-popup-btn {
+        padding: 15px 25px;
+        background-color: #ff9a9e;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.2em;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .open-popup-btn:hover {
+        background-color: #fad0c4;
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        .popup-content {
+          width: 90%;
+          padding: 20px;
+        }
+        .social-item i {
+          font-size: 1.3em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Button to open the popup -->
+    <button class="open-popup-btn" onclick="openPopup()">Follow Us</button>
+
+    <!-- Popup Container -->
+    <div id="popup" class="popup-container">
+      <div class="popup-content">
+        <h2>Follow us on</h2>
+        <div class="social-media-row">
+          <div class="social-item" onclick="followOn('facebook')">
+            <i class="fab fa-facebook-f"></i> Facebook
+          </div>
+          <div class="social-item" onclick="followOn('twitter')">
+            <i class="fab fa-twitter"></i> Twitter
+          </div>
+          <div class="social-item" onclick="followOn('instagram')">
+            <i class="fab fa-instagram"></i> Instagram
+          </div>
+          <div class="social-item" onclick="followOn('linkedin')">
+            <i class="fab fa-linkedin-in"></i> LinkedIn
+          </div>
+          <div class="social-item" onclick="followOn('youtube')">
+            <i class="fab fa-youtube"></i> YouTube
+          </div>
+        </div>
+        <div class="bottom-message">Developed with ❤️ by</div>
+      </div>
+    </div>
+
+    <script>
+      // Open the popup
+      function openPopup() {
+        document.getElementById("popup").style.display = "flex";
+      }
+
+      // Close the popup
+      function closePopup() {
+        document.getElementById("popup").style.display = "none";
+      }
+
+      // Display a message when the user clicks a social media platform
+      function followOn(platform) {
+        alert(
+          `Follow College on ${
+            platform.charAt(0).toUpperCase() + platform.slice(1)
+          }`
+        );
+      }
+
+      // Add a listener to close the popup if clicked outside the content area
+      window.addEventListener("click", function (event) {
+        const popup = document.getElementById("popup");
+        if (event.target === popup) {
+          closePopup();
+        }
+      });
+    </script>
+  </body>
+</html>

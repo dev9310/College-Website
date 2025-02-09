@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>College Sports Day - Video Reels</title>
+    <style>
+      /* Global reset and styles */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+        overflow: hidden;
+        color: #fff;
+      }
+      /* Title styling: top left with a nice design */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #007bff, #00d4ff);
+        z-index: 1000;
+      }
+      header h1 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0;
+        color: #fff;
+        text-align: left;
+      }
+      /* Hidden admin upload form (toggled via secret key) */
+      #adminUpload {
+        display: none;
+        position: fixed;
+        top: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #fff;
+        color: #333;
+        padding: 1rem 1.5rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        z-index: 1100;
+      }
+      #adminUpload h3 {
+        margin-bottom: 0.5rem;
+      }
+      #adminUpload input[type="file"],
+      #adminUpload input[type="text"] {
+        margin: 0.5rem 0;
+        width: 100%;
+        padding: 0.5rem;
+      }
+      #adminUpload button {
+        padding: 0.5rem 1rem;
+        margin: 0.3rem;
+        cursor: pointer;
+      }
+      /* Container for video reels */
+      #videoContainer {
+        height: 100vh;
+        overflow-y: auto;
+        scroll-snap-type: y mandatory;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 60px; /* leave space for the header */
+      }
+      /* Each video reel occupies full viewport height */
+      .video-card {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        scroll-snap-align: start;
+        background: #000;
+      }
+      /* Video wrapper fills the card (using letterboxing if necessary) */
+      .video-wrapper {
+        width: 100%;
+        height: 100%;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .video-wrapper video {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        background: #000;
+        cursor: pointer;
+      }
+      /* Overlay container for uploader info, caption, like and share buttons */
+      .overlay-info {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.4);
+        padding: 1rem;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .uploader {
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+      }
+      .uploader span:first-child {
+        font-weight: bold;
+        margin-right: 0.5rem;
+      }
+      .uploader .admin {
+        background: #007bff;
+        color: #fff;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+      }
+      .caption {
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+      }
+      .controls {
+        display: flex;
+        gap: 1rem;
+        font-size: 1rem;
+      }
+      .controls button {
+        background: none;
+        border: none;
+        color: #00d4ff;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      /* Remove any hover effects on the video cards */
+      .video-card:hover {
+        transform: none;
+      }
+      /* Responsive adjustments */
+      @media (max-width: 600px) {
+        .overlay-info {
+          padding: 0.8rem;
+        }
+        .uploader,
+        .caption,
+        .controls button {
+          font-size: 0.85rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Title/Header -->
+    <header>
+      <h1>College Sports Day</h1>
+    </header>
+
+    <!-- Hidden admin upload form -->
+    <div id="adminUpload">
+      <h3>Admin Upload</h3>
+      <input type="file" id="videoFile" accept="video/*" />
+      <input type="text" id="videoCaption" placeholder="Enter video description..." />
+      <div>
+        <button id="uploadBtn">Upload Video</button>
+        <button id="closeUpload">Close</button>
+      </div>
+      <small>Press Ctrl+Shift+U again to hide this panel.</small>
+    </div>
+
+    <!-- Container for video reels -->
+    <div id="videoContainer">
+      <!-- Video cards will be appended here dynamically -->
+    </div>
+
+    <script>
+      // Reference elements
+      const videoContainer = document.getElementById("videoContainer");
+      const adminUpload = document.getElementById("adminUpload");
+      const uploadBtn = document.getElementById("uploadBtn");
+      const closeUpload = document.getElementById("closeUpload");
+      const videoFileInput = document.getElementById("videoFile");
+      const videoCaptionInput = document.getElementById("videoCaption");
+
+      let videoCards = []; // Array to store video card elements
+
+      // Function to create a video card element
+      function createVideoCard(videoSrc, captionText) {
+        const card = document.createElement("div");
+        card.className = "video-card";
+
+        const videoWrapper = document.createElement("div");
+        videoWrapper.className = "video-wrapper";
+
+        const videoEl = document.createElement("video");
+        videoEl.src = videoSrc;
+        videoEl.autoplay = false;
+        videoEl.muted = false;
+        videoEl.playsInline = true;
+        videoEl.loop = true;
+        videoEl.preload = "metadata";
+
+        // Toggle play/pause on click
+        videoEl.addEventListener("click", () => {
+          document.querySelectorAll("video").forEach((vid) => {
+            if (vid !== videoEl) vid.pause();
+          });
+          if (videoEl.paused) {
+            videoEl.play();
+          } else {
+            videoEl.pause();
+          }
+        });
+
+        videoWrapper.appendChild(videoEl);
+
+        const overlay = document.createElement("div");
+        overlay.className = "overlay-info";
+
+        const uploaderDiv = document.createElement("div");
+        uploaderDiv.className = "uploader";
+        const uploaderName = document.createElement("span");
+        uploaderName.textContent = "Elite Squad";
+        const adminBadge = document.createElement("span");
+        adminBadge.className = "admin";
+        adminBadge.textContent = "Admin";
+        uploaderDiv.appendChild(uploaderName);
+        uploaderDiv.appendChild(adminBadge);
+
+        const captionDiv = document.createElement("div");
+        captionDiv.className = "caption";
+        captionDiv.textContent = captionText || "";
+
+        const controlsDiv = document.createElement("div");
+        controlsDiv.className = "controls";
+        const likeBtn = document.createElement("button");
+        likeBtn.textContent = "👍 Like";
+        const shareBtn = document.createElement("button");
+        shareBtn.textContent = "🔗 Share";
+
+        likeBtn.addEventListener("click", () => {
+          alert("You liked this video!");
+        });
+        shareBtn.addEventListener("click", () => {
+          alert("Share functionality coming soon!");
+        });
+
+        controlsDiv.appendChild(likeBtn);
+        controlsDiv.appendChild(shareBtn);
+
+        overlay.appendChild(uploaderDiv);
+        overlay.appendChild(captionDiv);
+        overlay.appendChild(controlsDiv);
+
+        card.appendChild(videoWrapper);
+        card.appendChild(overlay);
+
+        return card;
+      }
+
+      // Load videos from the /videos endpoint
+      function loadVideos() {
+        fetch("/videos")
+          .then((response) => response.json())
+          .then((videoUrls) => {
+            videoContainer.innerHTML = "";
+            videoUrls.forEach((url) => {
+              const card = createVideoCard(url, "");
+              videoContainer.appendChild(card);
+            });
+          })
+          .catch((err) =>
+            console.error("Error fetching videos:", err)
+          );
+      }
+
+      window.addEventListener("load", loadVideos);
+
+      // Handle admin upload button click
+      uploadBtn.addEventListener("click", async () => {
+        const file = videoFileInput.files[0];
+        const captionText = videoCaptionInput.value.trim();
+        if (!file) {
+          alert("Please select a video file to upload.");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("videoFile", file);
+
+        try {
+          const response = await fetch("/upload", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+          const newCard = createVideoCard(data.url, captionText);
+          videoContainer.insertBefore(newCard, videoContainer.firstChild);
+          videoCards = Array.from(document.getElementsByClassName("video-card"));
+          newCard.scrollIntoView({ behavior: "smooth" });
+          videoFileInput.value = "";
+          videoCaptionInput.value = "";
+          adminUpload.style.display = "none";
+        } catch (error) {
+          console.error("Upload failed", error);
+          alert("Upload failed. Please try again.");
+        }
+      });
+
+      // Close admin upload form
+      closeUpload.addEventListener("click", () => {
+        adminUpload.style.display = "none";
+      });
+
+      // Toggle admin upload form with Ctrl+Shift+U
+      document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.shiftKey && e.code === "KeyU") {
+          adminUpload.style.display =
+            adminUpload.style.display === "none" || adminUpload.style.display === ""
+              ? "block"
+              : "none";
+        }
+      });
+
+      // Navigation using arrow keys between reels
+      let currentCardIndex = 0;
+      document.addEventListener("keydown", (e) => {
+        if (adminUpload.style.display === "block") return;
+        if (videoCards.length === 0) return;
+        if (e.key === "ArrowDown") {
+          currentCardIndex = Math.min(currentCardIndex + 1, videoCards.length - 1);
+          videoCards[currentCardIndex].scrollIntoView({ behavior: "smooth" });
+        } else if (e.key === "ArrowUp") {
+          currentCardIndex = Math.max(currentCardIndex - 1, 0);
+          videoCards[currentCardIndex].scrollIntoView({ behavior: "smooth" });
+        }
+      });
+
+      // IntersectionObserver to control autoplay
+      const observerOptions = {
+        root: videoContainer,
+        threshold: 0.5,
+      };
+
+      const observerCallback = (entries) => {
+        entries.forEach((entry) => {
+          const videoEl = entry.target.querySelector("video");
+          if (entry.isIntersecting) {
+            document.querySelectorAll("video").forEach((vid) => {
+              if (vid !== videoEl) vid.pause();
+            });
+            videoEl.play().catch((err) => {
+              console.error("Error attempting to play", err);
+            });
+          } else {
+            videoEl.pause();
+          }
+        });
+      };
+
+      const observer = new IntersectionObserver(observerCallback, observerOptions);
+      function observeCards() {
+        videoCards.forEach((card) => observer.observe(card));
+      }
+
+      const mutationObserver = new MutationObserver(() => {
+        videoCards = Array.from(document.getElementsByClassName("video-card"));
+        observeCards();
+      });
+      mutationObserver.observe(videoContainer, { childList: true });
+
+      window.addEventListener("load", () => {
+        videoCards = Array.from(document.getElementsByClassName("video-card"));
+        observeCards();
+      });
+    </script>
+  </body>
+</html>

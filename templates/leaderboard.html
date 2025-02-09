@@ -1,0 +1,90 @@
+{% extends 'base.html' %} {% block content %}
+<div class="main-content fade">
+  <div class="category-tabs">
+    {% for category in categories %}
+    <div
+      class="category-tab {% if category.name == selected_category %}active{% endif %}"
+      onclick="changeCategory('{{ category.name }}', this)"
+    >
+      {{ category.name }}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="game-tabs">
+    {% for game in games %}
+    <div
+      class="game-tab {% if game.name == selected_game %}active{% endif %}"
+      onclick="changeGame('{{ game.name }}', this)"
+    >
+      {{ game.name }}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="glass-container fade">
+    <h2 id="gameTitle">{{ selected_game }} Leaderboard</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Team</th>
+            <th>Pts</th>
+            <th>W</th>
+            <th>L</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for team in leaderboard %}
+          <tr>
+            <script>
+              console.log("{{ team|safe }}");
+            </script>
+            <td>{{ team.name }}</td>
+            <td>{{ team.points }}</td>
+            <td>{{ team.won }}</td>
+            <td>{{ team.lost }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  function changeCategory(category, element) {
+    // Remove active class from all category tabs
+    document.querySelectorAll(".category-tab").forEach((tab) => {
+      tab.classList.remove("active");
+    });
+    // Add active class to the clicked category tab
+    element.classList.add("active");
+    // Redirect to the new category
+    window.location.href = "?category=" + category;
+  }
+
+  function changeGame(game, element) {
+    // Remove active class from all game tabs
+    document.querySelectorAll(".game-tab").forEach((tab) => {
+      tab.classList.remove("active");
+    });
+    // Add active class to the clicked game tab
+    element.classList.add("active");
+    // Redirect to the new game
+    window.location.href = "?category={{ selected_category }}&game=" + game;
+  }
+
+  // Responsive adjustments for small screens
+  function toggleSidebar() {
+    document.querySelector(".sidebar").classList.toggle("active");
+  }
+
+  function closeSidebar() {
+    document.querySelector(".sidebar").classList.remove("active");
+  }
+
+  // Show all games initially
+  filterGames("all");
+</script>
+{% endblock %}
