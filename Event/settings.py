@@ -14,9 +14,17 @@ from pathlib import Path
 
 import os
 from dotenv    import load_dotenv
-
+from supabase import create_client
 load_dotenv()
 
+
+
+# Supabase settings (Load from .env file)
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+
+# Initialize Supabase client
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -97,8 +105,12 @@ WSGI_APPLICATION = 'Event.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('SUPABASE_DB_NAME'),
+        'USER': os.getenv('SUPABASE_DB_USER'),
+        'PASSWORD': os.getenv('SUPABASE_DB_PASSWORD'),
+        'HOST': os.getenv('SUPABASE_DB_HOST'),
+        'PORT': os.getenv('SUPABASE_DB_PORT', '5432'),
     }
 }
 
@@ -140,9 +152,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    "/var/www/static/",
+    BASE_DIR / "static",  # Adjust this to your actual static directory
 ]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
