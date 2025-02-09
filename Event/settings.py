@@ -75,11 +75,11 @@ WSGI_APPLICATION = "Event.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": os.getenv("ENGINE", "django.db.backends.postgresql"),
-        "NAME": os.getenv("NAME", "default_NAME"),
-        "USER": os.getenv("USER", "default_USER"),
-        "PASSWORD": os.getenv("PASSWORD", "default_PASSWORD"),
-        "HOST": os.getenv("HOST", "default_HOST"),
-        "PORT": os.getenv("PORT", "5432"),
+        "NAME": os.getenv("SUPABASE_DB_NAME", "default_NAME"),
+        "USER": os.getenv("SUPABASE_DB_USER", "default_USER"),
+        "PASSWORD": os.getenv("SUPABASE_DB_PASSWORD", "default_PASSWORD"),
+        "HOST": os.getenv("SUPABASE_DB_HOST", "default_HOST"),
+        "PORT": os.getenv("SUPABASE_DB_PORT", "6543"),
         "OPTIONS": {"sslmode": "require"},  # Enforce SSL connection
     }
 }
