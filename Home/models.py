@@ -38,4 +38,4 @@ class Team(models.Model):
         ordering = ['-points', '-won']  # Sort teams by highest points, then most wins
 
     def __str__(self):
-        return f"{self.name} {self.game} " 
+        return f"{self.game} - {self.name} " 
