@@ -487,33 +487,3 @@ button.add-team-btn:hover {
     font-weight: bold;
 }
 
-
-/* Responsive adjustments */
-
-@media (max-width: 768px) {
-    .hamburger {
-        display: block;
-        color: #fff;
-    }
-    .category-tabs,
-    .game-tabs {
-        display: none;
-    }
-    .main-content {
-        margin-top: 60px;
-    }
-    .glass-container {
-        padding: 20px;
-    }
-    th,
-    td {
-        padding: 8px 10px;
-        font-size: 0.9em;
-    }
-    .sidebar {
-        display: block;
-    }
-    .sidebar.active {
-        display: block;
-    }
-}
