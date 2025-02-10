@@ -103,7 +103,7 @@ def videos(request):
     return render(request, 'video.html')
 
 def gallery(request):
-    images = os.listdir('staticfiles/static/Home/img/gallery')
+    images = os.listdir('staticfiles/Home/img/gallery')
     params = {'images': images}
     return render(request, 'gallery.html' , params)
 
