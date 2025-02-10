@@ -197,65 +197,18 @@
       <!-- Galleria Section -->
       <div class="galleria-container">
         <!-- Image 1 -->
-        <div
-          class="galleria-item"
-          onclick="openImage('img1.jpg', 'A 24 Hour Hackathon Hosted In .')"
-        >
-          <img src="{% static 'Home/img/img1.jpg' %}" alt="Moment 1" />
-          <div class="description-container">
-            A 24 Hour Hackathon Hosted In .
-          </div>
-        </div>
-        <!-- Image 2 -->
-        <div
-          class="galleria-item"
-          onclick="openImage('img2.jpg', 'Just Enjoy The Beauty Of  #VIBES.')"
-        >
-          <img src="{% static 'Home/img/img2.jpg' %}" alt="Moment 2" />
-          <div class="description-container">
-            Just Enjoy The Beauty Of #VIBES.
-          </div>
-        </div>
-        <!-- Image 3 -->
-        <div
-          class="galleria-item"
-          onclick="openImage('img3.jpg', 'Some Special People Bring Some Special Moments.')"
-        >
-          <img src="{% static 'Home/img/img3.jpg' %}" alt="Moment 3" />
-          <div class="description-container">
-            Some Special People Bring Some Special Moments.
-          </div>
-        </div>
-        <!-- Image 4 -->
-        <div
-          class="galleria-item"
-          onclick="openImage('img4.jpg', 'Welcome To , Where Students Love To Learn N Explore.')"
-        >
-          <img src="{% static 'Home/img/img4.jpg' %}" alt="Moment 4" />
-          <div class="description-container">
-            Welcome To , Where Students Love To Learn N Explore.
-          </div>
-        </div>
-        <!-- Image 5 -->
+
+        {% for img in images %}
         <div
           class="galleria-item"
           onclick="openImage('img5.jpg', 'Welcome To , Where Students Love To Learn N Explore.')"
         >
-          <img src="{% static 'Home/img/img5.jpg' %}" alt="Moment 5" />
+          <img src="{% static 'Home/img/gallery/' %}{{ img }}" alt="Moment 5" />
           <div class="description-container">
             Welcome To, Where Students Love To Learn N Explore.
           </div>
         </div>
-        <!-- Image 6 -->
-        <div
-          class="galleria-item"
-          onclick="openImage('img6.jpg', 'Welcome To , Where Students Love To Learn N Explore.')"
-        >
-          <img src="{% static 'Home/img/img6.jpg' %}" alt="Moment 6" />
-          <div class="description-container">
-            Welcome To , Where Students Love To Learn N Explore.
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </div>
 

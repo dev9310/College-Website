@@ -103,7 +103,9 @@ def videos(request):
     return render(request, 'video.html')
 
 def gallery(request):
-    return render(request, 'gallery.html')
+    images = os.listdir('staticfiles_build/static/Home/img/gallery')
+    params = {'images': images}
+    return render(request, 'gallery.html' , params)
 
 # ✅ Fetch games under a category
 def category_games(request, category_id):
