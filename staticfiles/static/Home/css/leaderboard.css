@@ -1,0 +1,489 @@
+/* Reset and Base */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    background: url("https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1350&q=80") no-repeat center center/cover;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+    color: #fff;
+    overflow-x: hidden;
+    transition: background-image 1s ease-in-out;
+}
+
+
+/* Dark overlay for contrast */
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: -1;
+}
+
+
+/* Smooth transitions */
+
+.fade {
+    transition: opacity 0.5s ease-in-out;
+}
+
+
+/* Navbar */
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 10;
+}
+
+.navbar h1 {
+    font-size: 2em;
+    transition: transform 0.3s ease;
+}
+
+.navbar h1:hover {
+    transform: scale(1.05);
+}
+
+.navbar .user-info {
+    font-size: 1em;
+}
+
+
+/* Hamburger menu (mobile) using 3 dots */
+
+.hamburger {
+    display: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.3s ease;
+}
+
+.hamburger:hover {
+    color: #6fcf97;
+}
+
+
+/* Sidebar (mobile) */
+
+.sidebar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    z-index: 20;
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    margin-bottom: 15px;
+}
+
+.sidebar .sidebar-categories,
+.sidebar .sidebar-games {
+    margin-bottom: 20px;
+}
+
+.sidebar .category-tab,
+.sidebar .game-tab {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.sidebar .category-tab.active,
+.sidebar .category-tab:hover,
+.sidebar .game-tab.active,
+.sidebar .game-tab:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+
+/* Main content area */
+
+.main-content {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+
+/* Desktop Category Tabs */
+
+.category-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.category-tabs .category-tab {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.category-tabs .category-tab:hover,
+.category-tabs .category-tab.active {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(1.03);
+}
+
+
+/* Desktop Game Tabs */
+
+.game-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.game-tabs .game-tab {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.game-tabs .game-tab:hover,
+.game-tabs .game-tab.active {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(1.03);
+}
+
+
+/* Glass container for leaderboard with dark tone */
+
+.glass-container {
+    background: rgba(20, 20, 20, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 30px;
+    width: 100%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 30px;
+    opacity: 0;
+    animation: fadeIn 0.8s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.glass-container h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+
+/* Leaderboard Table */
+
+.table-wrapper {
+    overflow-x: visible;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+    transition: background 0.3s ease;
+}
+
+th,
+td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+th {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+
+/* Team name styling to indicate clickability */
+
+.team-name {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+
+/* Style for table input fields in edit mode */
+
+#tableContainer input[type="number"] {
+    width: 60px;
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+}
+
+
+/* Admin Buttons */
+
+.btn-group {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+
+button:hover {
+    transform: scale(1.03);
+}
+
+button.edit-btn {
+    background: #ff9a9e;
+    color: #000;
+}
+
+button.edit-btn:hover {
+    background: #fad0c4;
+}
+
+button.save-btn {
+    background: #a18cd1;
+    color: #fff;
+}
+
+button.save-btn:hover {
+    background: #fbc2eb;
+}
+
+button.add-team-btn {
+    background: #6fcf97;
+    color: #000;
+}
+
+button.add-team-btn:hover {
+    background: #56b087;
+}
+
+
+/* Add Team Form */
+
+.add-team-form {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    animation: slideDown 0.4s ease forwards;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.add-team-form input {
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    color: #333;
+}
+
+.add-team-form label {
+    font-size: 0.9em;
+}
+
+
+/* Loading Overlay */
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.spinner {
+    border: 8px solid rgba(255, 255, 255, 0.3);
+    border-top: 8px solid #fff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Team Modal */
+
+.team-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 60;
+}
+
+.team-modal-content {
+    background: linear-gradient(135deg, #ffffff, #f9f9f9);
+    color: #333;
+    border: none;
+    border-radius: 15px;
+    padding: 30px;
+    position: relative;
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    background-color: rgba(24, 22, 22, 0.705);
+    font-family: "Segoe UI", sans-serif;
+    animation: modalIn 0.5s ease-out;
+}
+
+@keyframes modalIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.team-modal-content .close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5em;
+    color: #333;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.team-modal-content .close-button:hover {
+    transform: rotate(90deg);
+}
+
+
+/* Advanced Stats Modal UI */
+
+.team-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.team-header img {
+    width: 120px;
+    height: 120px;
+    border: 3px solid #6fcf97;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.team-header h2 {
+    font-size: 1.8em;
+    margin: 0;
+}
+
+.stats-section {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #6fcf97, #56b087);
+    padding: 10px 15px;
+    border-radius: 10px;
+    color: #fff;
+    flex: 1;
+    min-width: 100px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card i {
+    font-size: 1.5em;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    margin-bottom: 3px;
+}
+
+.stat-value {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+

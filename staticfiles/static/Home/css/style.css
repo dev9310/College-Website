@@ -1,0 +1,73 @@
+   /* Body with background image */
+   
+   body {
+       margin: 0;
+       padding: 0;
+       background: url("https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80") no-repeat center center fixed;
+       background-size: cover;
+       font-family: Arial, sans-serif;
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       height: 100vh;
+   }
+   /* Glass container style */
+   
+   .glass-container {
+       background: rgba(255, 255, 255, 0.2);
+       border-radius: 16px;
+       box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+       backdrop-filter: blur(10px);
+       -webkit-backdrop-filter: blur(10px);
+       border: 1px solid rgba(255, 255, 255, 0.18);
+       padding: 30px;
+       width: 320px;
+       text-align: center;
+       color: #fff;
+   }
+   
+   input {
+       width: 90%;
+       padding: 10px;
+       margin: 10px 0;
+       border: none;
+       border-radius: 5px;
+       font-size: 1em;
+   }
+   
+   button {
+       background: #6a11cb;
+       color: #fff;
+       border: none;
+       padding: 10px 15px;
+       cursor: pointer;
+       border-radius: 5px;
+       width: 95%;
+       margin: 10px 0;
+       font-size: 1em;
+   }
+   
+   .note {
+       font-size: 0.85em;
+       color: #ddd;
+   }
+   /* OTP section message styling */
+   
+   #otp-message {
+       margin: 10px 0;
+       font-size: 0.9em;
+       color: #cfcfcf;
+   }
+   /* Styling the OTP input field */
+   
+   .otp-input {
+       letter-spacing: 10px;
+       font-size: 1.5em;
+       text-align: center;
+       margin: 20px 0;
+   }
+   /* Initially hide OTP section */
+   
+   #otp-section {
+       display: none;
+   }
